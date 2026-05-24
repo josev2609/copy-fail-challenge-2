@@ -25,10 +25,13 @@ cd "$BUSYBOX_SRC"
 echo -e "${CYAN}[2/6] Configurando BusyBox (binario estático)...${NC}"
 make defconfig
 
-scripts/config --enable STATIC
-scripts/config --disable PIE
-scripts/config --enable ASH
-scripts/config --enable SH_IS_ASH
+# Forzar BusyBox estático sin usar scripts/config
+sed -i 's/^# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config
+sed -i 's/^CONFIG_PIE=y/# CONFIG_PIE is not set/' .config
+sed -i 's/^# CONFIG_ASH is not set/CONFIG_ASH=y/' .config
+sed -i 's/^# CONFIG_SH_IS_ASH is not set/CONFIG_SH_IS_ASH=y/' .config
+sed -i 's/^CONFIG_SH_IS_NONE=y/# CONFIG_SH_IS_NONE is not set/' .config
+
 set +o pipefail
 yes "" | make oldconfig
 set -o pipefail

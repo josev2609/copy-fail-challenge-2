@@ -74,15 +74,29 @@ scripts/config --enable INET
 scripts/config --enable PACKET
 
 # Módulos Crypto vulnerables / AF_ALG
+# Módulos Crypto vulnerables / AF_ALG
 scripts/config --enable CRYPTO
+scripts/config --enable CRYPTO_ALGAPI
+scripts/config --enable CRYPTO_MANAGER
+scripts/config --enable CRYPTO_USER
 scripts/config --enable CRYPTO_USER_API
 scripts/config --enable CRYPTO_USER_API_AEAD
 scripts/config --enable CRYPTO_USER_API_SKCIPHER
+
+# AEAD / authenc / authencesn
+scripts/config --enable CRYPTO_AEAD
+scripts/config --enable CRYPTO_AUTHENC
 scripts/config --enable CRYPTO_AUTHENCESN
+
+# Algoritmos usados por authencesn(hmac(sha256),cbc(aes))
 scripts/config --enable CRYPTO_AES
 scripts/config --enable CRYPTO_CBC
 scripts/config --enable CRYPTO_HMAC
 scripts/config --enable CRYPTO_SHA256
+
+# IV generators necesarios en varios modos AEAD
+scripts/config --enable CRYPTO_ECHAINIV
+scripts/config --enable CRYPTO_SEQIV
 scripts/config --enable CRYPTO_ALGAPI
 scripts/config --enable CRYPTO_MANAGER
 

@@ -22,7 +22,7 @@ BUILD_DIR         := kernel/build
 SCRIPTS_DIR       := scripts
 BZIMAGE_VULN      := $(BUILD_DIR)/bzImage_vuln
 BZIMAGE_PREBUILT  := /opt/kernels/bzImage_vuln
-INITRAMFS         := $(BUILD_DIR)/initramfs.cpio.gz
+INITRAMFS         := $(BUILD_DIR)/initramfs.cpio
 
 .PHONY: all setup fetch-kernel kernel rootfs \
         qemu qemu-patched patch \

@@ -1,0 +1,49 @@
+[1;36m[1/5] Clonando kernel v6.12...[0m
+[1;36m[2/5] Guardando hash del commit...[0m
+[1;36m[3/5] Configurando el kernel (tinyconfig)...[0m
+make[1]: Entering directory '/workspaces/copy-fail-challenge-2/kernel/linux'
+#
+# configuration written to .config
+#
+Using .config as base
+Merging ./kernel/configs/tiny.config
+Value of CONFIG_CC_OPTIMIZE_FOR_SIZE is redefined by fragment ./kernel/configs/tiny.config:
+Previous value: # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+New value: CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+
+Value of CONFIG_KERNEL_XZ is redefined by fragment ./kernel/configs/tiny.config:
+Previous value: # CONFIG_KERNEL_XZ is not set
+New value: CONFIG_KERNEL_XZ=y
+
+Value of CONFIG_SLUB_TINY is redefined by fragment ./kernel/configs/tiny.config:
+Previous value: # CONFIG_SLUB_TINY is not set
+New value: CONFIG_SLUB_TINY=y
+
+Merging ./arch/x86/configs/tiny.config
+Value of CONFIG_NOHIGHMEM is redefined by fragment ./arch/x86/configs/tiny.config:
+Previous value: # CONFIG_NOHIGHMEM is not set
+New value: CONFIG_NOHIGHMEM=y
+
+Value of CONFIG_UNWINDER_GUESS is redefined by fragment ./arch/x86/configs/tiny.config:
+Previous value: # CONFIG_UNWINDER_GUESS is not set
+New value: CONFIG_UNWINDER_GUESS=y
+
+#
+# merged configuration written to .config (needs make)
+#
+#
+# configuration written to .config
+#
+make[1]: Leaving directory '/workspaces/copy-fail-challenge-2/kernel/linux'
+make[1]: Entering directory '/workspaces/copy-fail-challenge-2/kernel/linux'
+#
+# configuration written to .config
+#
+make[1]: Leaving directory '/workspaces/copy-fail-challenge-2/kernel/linux'
+[1;36m[4/5] Compilando bzImage...[0m
+make[4]: *** Deleting file 'arch/x86/boot/compressed/vmlinux.bin.xz'
+make[3]: *** [arch/x86/boot/Makefile:100: arch/x86/boot/compressed/vmlinux] Error 2
+make[2]: *** [arch/x86/Makefile:312: bzImage] Error 2
+make[1]: *** [Makefile:224: __sub-make] Error 2
+make[1]: Leaving directory '/workspaces/copy-fail-challenge-2/kernel/linux'
+make: *** [Makefile:71: kernel] Error 2

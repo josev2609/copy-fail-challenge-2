@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+!/usr/bin/env bash
 # scripts/03_run_qemu.sh
 # Arranca la VM vulnerable en QEMU (modo consola serial)
 set -euo pipefail

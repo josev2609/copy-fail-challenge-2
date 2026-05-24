@@ -24,6 +24,15 @@ fi
 cd "$BUSYBOX_SRC"
 echo -e "${CYAN}[2/6] Configurando BusyBox (binario estático)...${NC}"
 make defconfig
+
+scripts/config --enable STATIC
+scripts/config --disable PIE
+scripts/config --enable ASH
+scripts/config --enable SH_IS_ASH
+set +o pipefail
+yes "" | make oldconfig
+set -o pipefail
+
 # Compilación estática para no necesitar librerías externas
 
 sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config

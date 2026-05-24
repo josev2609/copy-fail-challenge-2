@@ -8,6 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 KERNEL_SRC="$WORKSPACE_ROOT/kernel/linux"
 BUILD_DIR="$WORKSPACE_ROOT/kernel/build"
+INITRAMFS_DIR="$WORKSPACE_ROOT/kernel/initramfs"
 JOBS=$(nproc)
 
 GREEN='\033[1;32m'
@@ -49,8 +50,7 @@ scripts/config --enable UNIX98_PTYS
 scripts/config --enable BLK_DEV_INITRD
 scripts/config --enable INITRAMFS_SOURCE
 
-# IMPORTANTE:
-# Forzar GZIP y desactivar XZ para evitar errores/memoria en Codespaces
+# GZIP sí, XZ no
 scripts/config --disable KERNEL_XZ
 scripts/config --enable KERNEL_GZIP
 scripts/config --enable RD_GZIP
@@ -73,14 +73,21 @@ scripts/config --enable UNIX
 scripts/config --enable INET
 scripts/config --enable PACKET
 
-# Módulos Crypto vulnerables / AF_ALG
-# Módulos Crypto vulnerables / AF_ALG
+# Soporte de módulos para Hito 3
+scripts/config --enable MODULES
+scripts/config --enable MODULE_UNLOAD
+scripts/config --enable KMOD
+
+# Crypto base
 scripts/config --enable CRYPTO
 scripts/config --enable CRYPTO_ALGAPI
 scripts/config --enable CRYPTO_MANAGER
 scripts/config --enable CRYPTO_USER
 scripts/config --enable CRYPTO_USER_API
-scripts/config --enable CRYPTO_USER_API_AEAD
+
+# AF_ALG
+# IMPORTANTE: algif_aead como módulo descargable
+scripts/config --module CRYPTO_USER_API_AEAD
 scripts/config --enable CRYPTO_USER_API_SKCIPHER
 
 # AEAD / authenc / authencesn
@@ -94,30 +101,33 @@ scripts/config --enable CRYPTO_CBC
 scripts/config --enable CRYPTO_HMAC
 scripts/config --enable CRYPTO_SHA256
 
-# IV generators necesarios en varios modos AEAD
+# IV generators
 scripts/config --enable CRYPTO_ECHAINIV
 scripts/config --enable CRYPTO_SEQIV
-scripts/config --enable CRYPTO_ALGAPI
-scripts/config --enable CRYPTO_MANAGER
 
 # Usuarios, permisos y setuid
 scripts/config --enable MULTIUSER
 
-# Logs y debug mínimo
+# Logs
 scripts/config --enable PRINTK
 scripts/config --enable EARLY_PRINTK
 
 make olddefconfig
 
-echo -e "${CYAN}Verificando compresión del kernel:${NC}"
-grep -E "CONFIG_KERNEL_XZ|CONFIG_KERNEL_GZIP|CONFIG_RD_XZ|CONFIG_RD_GZIP" .config || true
+echo -e "${CYAN}Verificando configuración clave:${NC}"
+grep -E "CONFIG_MODULES|CONFIG_MODULE_UNLOAD|CONFIG_CRYPTO_USER_API_AEAD|CONFIG_KERNEL_XZ|CONFIG_KERNEL_GZIP|CONFIG_RD_XZ|CONFIG_RD_GZIP" .config || true
 
-echo -e "${CYAN}[4/5] Compilando bzImage...${NC}"
+echo -e "${CYAN}[4/5] Compilando bzImage y módulos...${NC}"
 
 make -j"$JOBS" bzImage
+make -j"$JOBS" modules
 
 mkdir -p "$BUILD_DIR"
 cp arch/x86/boot/bzImage "$BUILD_DIR/bzImage_vuln"
+
+echo -e "${CYAN}Instalando módulos dentro del initramfs...${NC}"
+mkdir -p "$INITRAMFS_DIR"
+make INSTALL_MOD_PATH="$INITRAMFS_DIR" modules_install
 
 echo -e "${GREEN}[5/5] ✓ Kernel listo en kernel/build/bzImage_vuln${NC}"
 ls -lh "$BUILD_DIR/bzImage_vuln"
